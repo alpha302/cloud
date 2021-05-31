@@ -1,8 +1,14 @@
 package funcs
 
 import (
+	"cloud/vars"
+	"crypto/sha256"
+	"encoding/base64"
+	"encoding/hex"
 	"fmt"
+	"net/url"
 	"os"
+	"strings"
 	"sync"
 	"time"
 )
@@ -31,6 +37,38 @@ func addHistory(word string)  {
 		}
 	}
 }
+
+func Url(s string) string {
+	urll, _ := url.Parse(s)
+	target := urll.Scheme + "://" + urll.Host + "/manager/html"
+	return target
+}
+
+func Config() (string, string) {
+	var pass string
+	switch {
+	case vars.NAME == "":
+		//默认是admin:admin爆破
+		if vars.PASS == "" {
+			pass = vars.Shellcode
+		} else {
+			pass = vars.PASS
+		}
+	case vars.NAME == "A":
+		//admin:admin
+		pass = vars.Shellcode
+		return "A", pass
+
+	case vars.NAME == "T":
+		//tomcat:tomcat
+		pass = vars.Shellcode2
+		return "T", pass
+
+	default:
+		return "", ""
+	}
+}
+
 func Menu() {
 	now := time.Now()
 	fmt.Printf("\033[1;35m%s\033[0m\n", `
